@@ -6,7 +6,7 @@ module Rack
   # e.g.:
   #   GET /some/resource HTTP/1.1
   #   Accept: application/json
-  # => 
+  # -> 
   #   GET /some/resource.json HTTP/1.1
   #   Accept: application/json
   # 
@@ -17,6 +17,8 @@ module Rack
   #   end
   # and then:
   #   mime :json, 'application/json'
+  #
+  # MIT-License - Cyril Rohr
   #
   class Format
     # Constants
