@@ -18,9 +18,12 @@ module Rack
   # and then:
   #   mime :json, 'application/json'
   #
+  # Note: it does not take into account multiple media types in the Accept header.
+  # The first media type takes precedence over all the others.
+  #
   # MIT-License - Cyril Rohr
   #
-  class Format
+  class AcceptFormat
     # Constants
     DEFAULT_EXTENSION = ".html"
 
@@ -31,7 +34,8 @@ module Rack
     def call(env)
       req = Rack::Request.new(env)
       unless req.path_info =~ /(.*)\.(.+)/
-        extension =  Rack::Mime::MIME_TYPES.invert[env['HTTP_ACCEPT']] || DEFAULT_EXTENSION
+        accept = env['HTTP_ACCEPT'].scan(/[^;,\s]*\/[^;,\s]*/)[0] rescue ""
+        extension =  Rack::Mime::MIME_TYPES.invert[accept] || DEFAULT_EXTENSION
         req.path_info = req.path_info+"#{extension}"
       end
       @app.call(env)
