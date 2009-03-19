@@ -6,9 +6,9 @@ require 'rack/mime'
 context "Rack::AcceptFormat" do
   specify "should do nothing when a format extension is already provided" do
     app = lambda { |env| [200, {'Content-Type' => 'text/plain'}, env['PATH_INFO']] }
-    request = Rack::MockRequest.env_for("/resource.json")
+    request = Rack::MockRequest.env_for("/1.0-stable/resource.json")
     body = Rack::AcceptFormat.new(app).call(request).last
-    body.should == "/resource.json"
+    body.should == "/1.0-stable/resource.json"
   end
   
   context "there is no format extension" do
@@ -20,22 +20,22 @@ context "Rack::AcceptFormat" do
     end
     
     specify "should add the default extension if no Accept header" do
-      request = Rack::MockRequest.env_for("/resource")
+      request = Rack::MockRequest.env_for("/1.0-stable/resource")
       body = Rack::AcceptFormat.new(app).call(request).last
-      body.should == "/resource#{Rack::AcceptFormat::DEFAULT_EXTENSION}"
+      body.should == "/1.0-stable/resource#{Rack::AcceptFormat::DEFAULT_EXTENSION}"
     end
     
     specify "should add the default extension if the Accept header is not registered in the Mime::Types" do
-      request = Rack::MockRequest.env_for("/resource", 'HTTP_ACCEPT' => 'application/json;q=1.0, text/html;q=0.8, */*;q=0.1')
+      request = Rack::MockRequest.env_for("/1.0-stable/resource", 'HTTP_ACCEPT' => 'application/json;q=1.0, text/html;q=0.8, */*;q=0.1')
       body = Rack::AcceptFormat.new(app).call(request).last
-      body.should == "/resource#{Rack::AcceptFormat::DEFAULT_EXTENSION}"
+      body.should == "/1.0-stable/resource#{Rack::AcceptFormat::DEFAULT_EXTENSION}"
     end
     
     specify "should add the correct extension if the Accept header is registered in the Mime::Types" do
       mime :json, 'application/json'
-      request = Rack::MockRequest.env_for("/resource", 'HTTP_ACCEPT' => 'application/json;q=1.0, text/html;q=0.8, */*;q=0.1')
+      request = Rack::MockRequest.env_for("/1.0-stable/resource", 'HTTP_ACCEPT' => 'application/json;q=1.0, text/html;q=0.8, */*;q=0.1')
       body = Rack::AcceptFormat.new(app).call(request).last
-      body.should == "/resource.json"
+      body.should == "/1.0-stable/resource.json"
     end
   end
 end
